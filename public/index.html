@@ -134,7 +134,7 @@ body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
       <div class="price"><h3>KI-Check</h3><div class="eur">0 €</div><ul><li>5 Fragen mit Auflösung</li><li>Probe-Fahrstunde</li><li>ohne Anmeldung</li></ul><a class="btn alt" href="#check">Jetzt starten</a></div>
       <div class="price hot"><h3>Führerschein online</h3><div class="eur">39 €</div><ul><li>Theorie und 5 Fahrstunden</li><li>Prüfung</li><li>Urkunde als PDF</li><li><strong>1 Monat Tomorrow Minds Club kostenlos</strong></li></ul><a class="btn" data-buy="online" href="#">Mit PayPal buchen</a></div>
       <div class="price"><h3>Führerschein Plus</h3><div class="eur">69 €</div><ul><li>alles aus „online“</li><li>15 Minuten Prüfung mit einem Menschen</li><li>gedruckte Urkunde, Karte und Aufnäher per Post</li></ul><a class="btn alt" data-buy="plus" href="#">Mit PayPal buchen</a></div>
-      <div class="price"><h3>Mall-Workshop</h3><div class="eur">39 €</div><ul><li>90 Minuten vor Ort</li><li>Karte sofort zum Mitnehmen</li><li>Barzahlung am Stand</li><li>Orte und Termine bei Tomorrow Minds</li></ul><a class="btn alt" href="https://www.tomorrowminds.de/events" target="_blank" rel="noopener">Termine ansehen</a></div>
+      <div class="price"><h3>Mall-Workshop</h3><div class="eur">39 €</div><ul><li>90 Minuten vor Ort</li><li>Karte sofort zum Mitnehmen</li><li>Barzahlung am Stand</li><li>Orte und Termine bei Tomorrow Minds</li></ul><a class="btn alt" data-t="klick_termine" href="https://www.tomorrowminds.de/events" target="_blank" rel="noopener">Termine ansehen</a></div>
     </div>
     <p class="small" style="margin-top:16px">Es buchen die Eltern. Nach der Buchung bekommt ihr per E-Mail den Starttermin. Alle Preise inklusive Mehrwertsteuer.</p>
   </div></section>
@@ -149,14 +149,14 @@ body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
     <div class="parents">
       <div><h3>Was Ihr Kind lernt</h3><p>KI als Werkzeug zu steuern: eigene Ideen klar formulieren, Ergebnisse prüfen, Daten schützen. Die Idee, die Entscheidung und die Verantwortung bleiben beim Kind.</p></div>
       <div><h3>Was der Führerschein ist</h3><p>Ein Lernnachweis von Tomorrow Minds. Er ist keine amtliche Erlaubnis und kein wissenschaftlich geprüfter Test. Er zeigt, was Ihr Kind in den Aufgaben selbst gekonnt hat.</p></div>
-      <div><h3>Datenschutz</h3><p>Der KI-Check und die Probe-Fahrstunde laufen ganz im Browser. Es gibt kein Konto, keine Cookies und kein Tracking. Antworten werden nicht gespeichert und nicht übertragen.</p></div>
+      <div><h3>Datenschutz</h3><p>Der KI-Check und die Probe-Fahrstunde laufen ganz im Browser. Es gibt kein Konto und keine Cookies. Antworten werden nicht gespeichert und nicht übertragen. Wir zählen nur anonym, wie oft die Seite und der Check genutzt werden.</p></div>
     </div>
   </div></section>
 
   <section class="band ink"><div class="wrap">
     <h2>Und danach? Tomorrow Minds.</h2>
     <p>Mit dem Führerschein bist du startklar für mehr: Im Tomorrow Minds Club verwirklichst du eigene Ideen, löst Challenges und findest ein Team. Der erste Monat ist beim Führerschein online dabei.</p>
-    <div class="row"><a class="btn alt" href="https://www.tomorrowminds.de/club" target="_blank" rel="noopener">Zum Tomorrow Minds Club</a></div>
+    <div class="row"><a class="btn alt" data-t="klick_club" href="https://www.tomorrowminds.de/club" target="_blank" rel="noopener">Zum Tomorrow Minds Club</a></div>
   </div></section>
 </div>
 
@@ -186,8 +186,10 @@ body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
   <p>CUUP UG (haftungsbeschränkt), vertreten durch den Geschäftsführer Thomas Löbke, Kanzlerweg 23, 12101 Berlin, <a href="mailto:thomas@tomorrowminds.de">thomas@tomorrowminds.de</a></p>
   <h2>Hosting</h2>
   <p>Diese Website wird über Cloudflare ausgeliefert. Beim Aufruf verarbeitet Cloudflare technisch notwendige Daten wie IP-Adresse, Zeitpunkt und aufgerufene Seite, um die Seite auszuliefern und vor Angriffen zu schützen. Rechtsgrundlage ist unser berechtigtes Interesse an einem sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
-  <h2>Keine Cookies, kein Tracking</h2>
-  <p>Diese Website setzt keine Cookies, nutzt keine Analyse-Werkzeuge und lädt keine Schriften oder Skripte von Dritten.</p>
+  <h2>Keine Cookies, keine Dienste von Dritten</h2>
+  <p>Diese Website setzt keine Cookies und lädt keine Schriften, Skripte oder Analyse-Werkzeuge von Dritten.</p>
+  <h2>Anonyme Zählung</h2>
+  <p>Wir zählen selbst, wie oft die Seite aufgerufen, der KI-Check und die Probe-Fahrstunde geöffnet und beendet und ein Buchen-Knopf angeklickt wird. Gespeichert wird nur eine Zahl pro Tag und Ereignis. Wir speichern dabei keine IP-Adressen, keine Kennungen und keine Antworten. Einzelne Besucher lassen sich nicht erkennen oder wiedererkennen.</p>
   <h2>KI-Check und Probe-Fahrstunde</h2>
   <p>Beide laufen vollständig im Browser. Antworten und Texte werden weder gespeichert noch an uns oder Dritte übertragen. Es gibt kein Konto.</p>
   <h2>Buchung und Kontakt per E-Mail</h2>
@@ -216,6 +218,10 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+/* ---------- Anonyme Zählung (nur Zahl pro Tag und Ereignis) ---------- */
+const sent = new Set();
+function track(ev) { if (sent.has(ev)) return; sent.add(ev); try { if (location.protocol.startsWith("http")) navigator.sendBeacon("/api/e", ev); } catch (e) {} }
+
 /* ---------- Router ---------- */
 const VIEWS = ["start", "check", "fahrstunde", "impressum", "datenschutz"];
 function show() {
@@ -223,6 +229,8 @@ function show() {
   const anchor = location.hash.replace("#", "");
   if (!VIEWS.includes(v)) v = "start";
   $$("[data-view]").forEach(e => e.hidden = e.dataset.view !== v);
+  if (v === "check") track("check_offen");
+  if (v === "fahrstunde") track("fahrstunde_offen");
   if (v === "check" && !check.started) renderCheck();
   if (v === "fahrstunde") renderDrive();
   const t = v === "start" && anchor.startsWith("start-") ? document.getElementById(anchor) : null;
@@ -242,6 +250,7 @@ function wireBuy() {
   $$("[data-buy]").forEach(a => {
     const k = a.dataset.buy;
     a.href = buyLink(k);
+    a.addEventListener("click", () => track("klick_" + k));
     if (k !== "mall" && (k === "online" ? CFG.paypalOnline : CFG.paypalPlus)) { a.textContent = "Mit PayPal buchen"; a.target = "_blank"; a.rel = "noopener"; }
   });
 }
@@ -292,10 +301,11 @@ function renderCheck() {
     <div class="bar"><i style="width:${(check.i + (check.shown ? 1 : 0)) / CARDS.length * 100}%"></i></div>
     <h2>${esc(c.title)}</h2><p class="q">${esc(c.q)}</p><div class="opts">${opts}${dunno}</div>${fb}<div class="row">${btn}</div>`;
   $$(".opt", box).forEach(b => b.onclick = () => { check.pick = +b.dataset.n; renderCheck(); });
-  const s = $("#showBtn"); if (s) s.onclick = () => { check.shown = true; check.res[check.i] = check.pick === c.right; renderCheck(); };
+  const s = $("#showBtn"); if (s) s.onclick = () => { check.shown = true; check.res[check.i] = check.pick === c.right; if (check.i === 0) track("check_start"); renderCheck(); };
   const n = $("#nextBtn"); if (n) n.onclick = () => { check.i++; check.pick = null; check.shown = false; renderCheck(); window.scrollTo(0, 0); };
 }
 function renderResult(box) {
+  track("check_fertig");
   const scored = CARDS.map((c, i) => ({ c, ok: check.res[i] })).filter(x => x.c.scored);
   const good = scored.filter(x => x.ok), open = scored.filter(x => !x.ok);
   const prio = ["K4", "K3", "K5", "K2"];
@@ -355,6 +365,7 @@ function updDrive() {
   FIELDS.forEach(([k, L, n]) => { const w = words(drive.v[k]); if (w >= 4) done++; else tips.push(w ? `${n}: Sag es noch etwas genauer.` : `${n} fehlt noch.`); });
   if (words(drive.v.i) >= 4 && !/\b(ich|mein|meine|meiner|meinem|wir|unser|unsere)\b/i.test(drive.v.i + " " + drive.v.k)) tips.push("Idee: Woran erkennt man, dass es deine Idee ist? Schreib „Meine Idee: …“.");
   if (FIELDS.some(([k]) => PRIVATE.test(drive.v[k]))) tips.unshift("Stopp! Das sieht nach privaten Daten aus. Lass Namen, Adressen, Nummern und Passwörter weg.");
+  if (done === 4) track("fahrstunde_fertig");
   if (done === 4 && tips.length === 0) tips.push("Stark! Ziel, eigene Idee, Kontext und Form sind drin. Jetzt kann die KI für dich arbeiten – und du erkennst deine Idee im Ergebnis wieder.");
   $("#tips").innerHTML = tips.map(t => `<li>${esc(t)}</li>`).join("");
   $("#tips").className = "tips" + (done === 4 && tips.length === 1 && tips[0].startsWith("Stark") ? " good" : "");
@@ -369,7 +380,7 @@ function mall() {
     t1 = setTimeout(() => { if (location.hash && location.hash !== "#start") { bar.hidden = false; t2 = setTimeout(() => { resetCheck(); drive.v = { k: "", i: "", c: "", f: "" }; drive.drawn = false; location.hash = "#start"; bar.hidden = true; }, 20000); } }, 90000); };
   ["pointerdown", "keydown", "input"].forEach(e => addEventListener(e, arm, true)); arm();
 }
-document.addEventListener("DOMContentLoaded", () => { wireBuy(); mall(); show(); });
+document.addEventListener("DOMContentLoaded", () => { track(MALL ? "besuch_mall" : "besuch"); wireBuy(); mall(); show(); $$("[data-t]").forEach(e => e.addEventListener("click", () => track(e.dataset.t))); });
 </script>
 </body>
 </html>
