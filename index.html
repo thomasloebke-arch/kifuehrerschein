@@ -29,7 +29,7 @@ nav a{font-weight:700;text-decoration:none;color:#1C1A3F;margin-left:18px}
 .link{background:none;border:0;font:inherit;color:#B3124D;text-decoration:underline;cursor:pointer;min-height:44px}
 :focus-visible{outline:4px solid #3FA9FF;outline-offset:3px}
 .row{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px}
-.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;padding:28px 0 48px}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;padding:28px 20px 48px}
 .hero .kiki svg{width:100%;max-width:420px;height:auto;display:block;margin:0 auto}
 .hero .sub{font-size:1.25rem;max-width:34ch}
 .tag{display:inline-block;background:#FFD43B;font-weight:700;padding:4px 12px;border-radius:10px;margin-bottom:14px}
@@ -42,6 +42,7 @@ section.band{padding:52px 0}section.sky{background:#3FA9FF}section.ink{backgroun
 .steps li{background:#fff;color:#1C1A3F;border-radius:20px;padding:20px;counter-increment:s}
 .steps li::before{content:counter(s);display:inline-flex;width:40px;height:40px;border-radius:50%;background:#1C1A3F;color:#fff;align-items:center;justify-content:center;font:900 1.2rem Gabarito;margin-bottom:10px}
 @media(max-width:860px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:480px){.steps{grid-template-columns:1fr}}
+.meet{display:grid;grid-template-columns:180px 1fr;gap:28px;align-items:center}.meet .kiki svg{width:100%;height:auto;display:block}@media(max-width:640px){.meet{grid-template-columns:1fr}.meet .kiki svg{max-width:150px}}
 .kikif{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
 .kikif div{background:#fff;color:#1C1A3F;border-radius:20px;padding:18px}.kikif b{display:block;font:900 3rem/1 Gabarito;color:#3FA9FF}
 @media(max-width:760px){.kikif{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -84,7 +85,7 @@ body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
     <div>
       <span class="tag">Für Kinder von 8 bis 16</span>
       <h1>KI ist deine Superkraft. Mit Führerschein.</h1>
-      <p class="sub">Lerne, KI so zu steuern, dass <strong>deine</strong> Ideen herauskommen – nicht irgendwelche.</p>
+      <p class="sub">Lerne, KI so zu steuern, dass <strong>deine</strong> Ideen herauskommen. Damit baust du die Welt von morgen.</p>
       <div class="row"><a class="btn" href="#check">KI-Check starten</a><a class="btn alt" href="#start-so">So geht's</a></div>
       <p class="small" style="margin-top:14px">Kostenlos · 3 bis 5 Minuten · ohne Anmeldung</p>
     </div>
@@ -102,8 +103,10 @@ body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
   </div></section>
 
   <section class="band ink"><div class="wrap">
-    <h2>Die KIKI-Formel</h2>
-    <p>Eine KI denkt sich vieles selbst aus. Wenn du nur „Mach mir ein cooles Spiel“ sagst, bekommst du <em>ihr</em> Spiel. Mit der KIKI-Formel bekommst du <em>deins</em>.</p>
+    <div class="meet"><div class="kiki"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-22.0 -20.0 124.0 126.0" role="img" aria-label="Super-Kiki"><g transform="rotate(-3 40 98)"><path fill="#FF3D7F" d="M18 22L-8 84L7 79L14 94L30 60Z"/><path d="M42 50L72 18" stroke="#3FA9FF" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M42 52L74 86" stroke="#3FA9FF" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M30 16V84" stroke="#3FA9FF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path fill="#3FA9FF" d="M60.00 18.00A12.00 12.00 0 1 0 84.00 18.00A12.00 12.00 0 1 0 60.00 18.00Z"/><path fill="#1C1A3F" d="M22.50 22.00H37.50A6.50 6.50 0 0 1 44.00 28.50V28.50A6.50 6.50 0 0 1 37.50 35.00H22.50A6.50 6.50 0 0 1 16.00 28.50V28.50A6.50 6.50 0 0 1 22.50 22.00Z"/><path fill="#FFFFFF" d="M23.70 26.00H24.80A2.70 2.70 0 0 1 27.50 28.70V28.80A2.70 2.70 0 0 1 24.80 31.50H23.70A2.70 2.70 0 0 1 21.00 28.80V28.70A2.70 2.70 0 0 1 23.70 26.00Z"/><path d="M32.5 29.5Q35.7 25.5 39 29.5" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path fill="#1C1A3F" d="M22 41H39A8.5 8 0 0 1 22 41Z"/><path fill="#FFD43B" d="M33 53L23 67H29.5L26 78L38 62H31.5Z"/></g></svg></div><div>
+    <h2>Das ist Kiki. Und das ist ihre Formel.</h2>
+    <p>Kiki ist deine KI: superstark, superschnell – und sie macht genau das, was du ihr sagst. Sagst du nur „Mach mir ein cooles Spiel“, bekommst du <em>irgendein</em> Spiel. Mit der KIKI-Formel bekommst du <em>deins</em>. Ihr Name hilft dir beim Merken:</p>
+    </div></div>
     <div class="kikif">
       <div><b>K</b><h3>Kern</h3><p>Was willst du?</p></div>
       <div><b>I</b><h3>Idee</h3><p>Was ist dein eigener Einfall?</p></div>
@@ -131,7 +134,7 @@ body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
       <div class="price"><h3>KI-Check</h3><div class="eur">0 €</div><ul><li>5 Fragen mit Auflösung</li><li>Probe-Fahrstunde</li><li>ohne Anmeldung</li></ul><a class="btn alt" href="#check">Jetzt starten</a></div>
       <div class="price hot"><h3>Führerschein online</h3><div class="eur">39 €</div><ul><li>Theorie und 5 Fahrstunden</li><li>Prüfung</li><li>Urkunde als PDF</li><li><strong>1 Monat Tomorrow Minds Club kostenlos</strong></li></ul><a class="btn" data-buy="online" href="#">Mit PayPal buchen</a></div>
       <div class="price"><h3>Führerschein Plus</h3><div class="eur">69 €</div><ul><li>alles aus „online“</li><li>15 Minuten Prüfung mit einem Menschen</li><li>gedruckte Urkunde, Karte und Aufnäher per Post</li></ul><a class="btn alt" data-buy="plus" href="#">Mit PayPal buchen</a></div>
-      <div class="price"><h3>Mall-Workshop</h3><div class="eur">39 €</div><ul><li>90 Minuten vor Ort</li><li>Karte sofort zum Mitnehmen</li><li>Barzahlung am Stand</li><li>[Ort und Termine folgen]</li></ul><a class="btn alt" data-buy="mall" href="#">Termin anfragen</a></div>
+      <div class="price"><h3>Mall-Workshop</h3><div class="eur">39 €</div><ul><li>90 Minuten vor Ort</li><li>Karte sofort zum Mitnehmen</li><li>Barzahlung am Stand</li><li>Orte und Termine bei Tomorrow Minds</li></ul><a class="btn alt" href="https://www.tomorrowminds.de/events" target="_blank" rel="noopener">Termine ansehen</a></div>
     </div>
     <p class="small" style="margin-top:16px">Es buchen die Eltern. Nach der Buchung bekommt ihr per E-Mail den Starttermin. Alle Preise inklusive Mehrwertsteuer.</p>
   </div></section>
