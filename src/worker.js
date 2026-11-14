@@ -1,7 +1,35 @@
 // Anonyme Zählung: pro Tag und Ereignis nur eine Zahl. Keine IP, keine Kennung, keine Cookies.
-const EREIGNISSE = new Set(["besuch", "besuch_mall", "check_offen", "check_start", "check_fertig", "fahrstunde_offen", "fahrstunde_fertig", "klick_online", "klick_plus", "klick_mall", "klick_termine", "klick_club"]);
-const NAMEN = { besuch: "Seitenaufrufe", besuch_mall: "Seitenaufrufe Mall-Tablet", check_offen: "KI-Check geöffnet", check_start: "KI-Check begonnen", check_fertig: "KI-Check beendet", fahrstunde_offen: "Probe-Fahrstunde geöffnet", fahrstunde_fertig: "Probe-Fahrstunde ausgefüllt", klick_online: "Klick: Führerschein online", klick_plus: "Klick: Führerschein Plus", klick_mall: "Klick: Mall-Workshop", klick_termine: "Klick: Termine", klick_club: "Klick: Club" };
+const EREIGNISSE = new Set(["besuch", "besuch_mall", "check_offen", "check_start", "check_fertig", "fahrstunde_offen", "fahrstunde_fertig", "klick_online", "klick_plus", "klick_mall", "klick_termine", "klick_club", "mission_start", "checkin_gesendet"]);
+const NAMEN = { besuch: "Seitenaufrufe", besuch_mall: "Seitenaufrufe Mall-Tablet", check_offen: "KI-Check geöffnet", check_start: "KI-Check: Blitzrunde begonnen", check_fertig: "KI-Check beendet", fahrstunde_offen: "Probe-Fahrstunde geöffnet", fahrstunde_fertig: "Probe-Fahrstunde ausgefüllt", klick_online: "Klick: Führerschein online", klick_plus: "Klick: Führerschein Plus", klick_mall: "Klick: Mall-Workshop", klick_termine: "Klick: Termine", klick_club: "Klick: Club", mission_start: "Mission begonnen", checkin_gesendet: "Auswertung angefordert" };
 const heute = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(new Date());
+
+const SCHLUESSEL_HASH = "0964dc246aa45b1c7239dcb22ebdaff19c317a0d325331f189a0abad6161302b"; // SHA-256 des Zugangsschlüssels für /eingang (der Schlüssel selbst steht nicht im Code)
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const kurz = (v, n) => String(v ?? "").slice(0, n);
+async function sha256(t) { const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, "0")).join(""); }
+const ALTER = new Set(["8-10", "11-13", "14-16"]);
+
+async function checkin(request, env) {
+  let d; try { d = await request.json(); } catch (e) { return new Response("ungültig", { status: 400 }); }
+  const mail = kurz(d.mail, 120).trim();
+  if (d.ok !== true || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail) || !ALTER.has(d.alter)) return new Response("ungültig", { status: 400 });
+  const liste = (v, n) => JSON.stringify((Array.isArray(v) ? v : []).slice(0, n).map(x => typeof x === "boolean" ? x : kurz(x, 30)));
+  await env.DB.prepare("INSERT INTO checkins (id, erstellt, spitzname, altersgruppe, interessen, ki_erfahrung, blitz, app_art, idee, app_name, auftrag, antwort, angetippt, eigenanteil, bemerkt, eltern_email, mall) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17)")
+    .bind(crypto.randomUUID(), new Date().toISOString(), kurz(d.name, 24), d.alter, liste(d.inter, 3), kurz(d.erf, 12), liste(d.blitz, 5), kurz(d.art, 40), kurz(d.idee, 400), kurz(d.app, 40), kurz(d.auftrag, 600), kurz(d.antwort, 600), liste(d.falsch, 3), kurz(d.eigen, 8), liste(d.bemerkt, 3), mail, d.mall ? 1 : 0).run();
+  return new Response(null, { status: 204 });
+}
+
+async function eingang(url, env) {
+  if (await sha256(url.searchParams.get("key") || "") !== SCHLUESSEL_HASH) return new Response("Nicht gefunden", { status: 404 });
+  const { results } = await env.DB.prepare("SELECT * FROM checkins ORDER BY erstellt DESC LIMIT 200").all();
+  const zeile = (k, v) => v ? `<p><b>${k}:</b> ${esc(v)}</p>` : "";
+  const karten = results.map(r => `<article><h2>${esc(r.spitzname)} · ${esc(r.altersgruppe)} · „${esc(r.app_name)}“</h2><p class="s">${esc(r.erstellt.slice(0, 16).replace("T", " "))} UTC${r.mall ? " · Mall" : ""} · <a href="mailto:${esc(r.eltern_email)}?subject=${encodeURIComponent(r.spitzname + "s KI-Check: die Idee, zwei Stärken und ein nächster Schritt")}">${esc(r.eltern_email)}</a></p>
+${zeile("Interessen", r.interessen)}${zeile("KI-Erfahrung", r.ki_erfahrung)}${zeile("Blitzrunde (Fahrrad, Hund, Pinguin, Stimme, Eis)", r.blitz)}${zeile("App-Art", r.app_art)}${zeile("Idee", r.idee)}${zeile("Auftrag an Kiki", r.auftrag)}${zeile("Antwort an Kiki", r.antwort)}${zeile("Angetippt (8–10)", r.angetippt)}${zeile("Eigenanteil", r.eigenanteil)}${zeile("Fallen selbst bemerkt", r.bemerkt)}</article>`).join("");
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Eingang – KI-Check</title>
+<style>body{font-family:system-ui,sans-serif;margin:24px auto;max-width:820px;padding:0 16px;color:#1C1A3F;background:#FFF8EC}article{background:#fff;border-radius:14px;padding:16px 20px;margin:14px 0;border:2px solid #1C1A3F}h2{margin:0 0 4px;font-size:1.15rem}p{margin:.35em 0}.s{color:#4E4B6B;font-size:.9rem}</style></head><body>
+<h1>Eingang: KI-Checks (${results.length})</h1><p class="s">Enthält Angaben von Kindern und E-Mail-Adressen der Eltern. Bitte den Link nicht weitergeben. Einträge werden nach 90 Tagen gelöscht.</p>${karten || "<p>Noch keine Einträge.</p>"}</body></html>`;
+  return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "referrer-policy": "no-referrer" } });
+}
 
 export default {
   async fetch(request, env) {
@@ -14,6 +42,8 @@ export default {
       }
       return new Response(null, { status: 204 });
     }
+    if (url.pathname === "/api/checkin" && request.method === "POST") return checkin(request, env);
+    if (url.pathname === "/eingang") return eingang(url, env);
     if (url.pathname === "/zahlen") {
       const { results } = await env.DB.prepare("SELECT tag, ereignis, anzahl FROM zahlen WHERE tag >= date('now', '-30 day') ORDER BY tag DESC").all();
       const tage = [...new Set(results.map(r => r.tag))];
@@ -29,5 +59,9 @@ export default {
       return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex" } });
     }
     return env.ASSETS.fetch(request);
+  },
+  // Täglich: Einträge löschen, die älter als 90 Tage sind.
+  async scheduled(event, env) {
+    await env.DB.prepare("DELETE FROM checkins WHERE erstellt < ?1").bind(new Date(Date.now() - 90 * 864e5).toISOString()).run();
   }
 };
