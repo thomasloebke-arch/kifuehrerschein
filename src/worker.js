@@ -1,12 +1,13 @@
 // Anonyme Zählung: pro Tag und Ereignis nur eine Zahl. Keine IP, keine Kennung, keine Cookies.
-const EREIGNISSE = new Set(["besuch", "besuch_mall", "check_offen", "check_start", "check_fertig", "fahrstunde_offen", "fahrstunde_fertig", "klick_online", "klick_plus", "klick_mall", "klick_termine", "klick_club", "mission_start", "checkin_gesendet"]);
-const NAMEN = { besuch: "Seitenaufrufe", besuch_mall: "Seitenaufrufe Mall-Tablet", check_offen: "KI-Check geöffnet", check_start: "KI-Check: Blitzrunde begonnen", check_fertig: "KI-Check beendet", fahrstunde_offen: "Probe-Fahrstunde geöffnet", fahrstunde_fertig: "Probe-Fahrstunde ausgefüllt", klick_online: "Klick: Führerschein online", klick_plus: "Klick: Führerschein Plus", klick_mall: "Klick: Mall-Workshop", klick_termine: "Klick: Termine", klick_club: "Klick: Club", mission_start: "Mission begonnen", checkin_gesendet: "Auswertung angefordert" };
+const EREIGNISSE = new Set(["besuch", "besuch_mall", "check_offen", "check_start", "check_fertig", "fahrstunde_offen", "fahrstunde_fertig", "klick_online", "klick_plus", "klick_mall", "klick_termine", "klick_club", "mission_start", "checkin_gesendet", "teaser_antwort"]);
+const NAMEN = { besuch: "Seitenaufrufe", besuch_mall: "Seitenaufrufe Mall-Tablet", check_offen: "KI-Check geöffnet", check_start: "KI-Check: Blitzrunde begonnen", check_fertig: "KI-Check beendet", fahrstunde_offen: "Probe-Fahrstunde geöffnet", fahrstunde_fertig: "Probe-Fahrstunde ausgefüllt", klick_online: "Klick: Führerschein online", klick_plus: "Klick: Führerschein Plus", klick_mall: "Klick: Mall-Workshop", klick_termine: "Klick: Termine", klick_club: "Klick: Club", mission_start: "Mission begonnen", checkin_gesendet: "Auswertung angefordert", teaser_antwort: "Startseite: Frage beantwortet" };
 const heute = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(new Date());
 
 const SCHLUESSEL_HASH = "0964dc246aa45b1c7239dcb22ebdaff19c317a0d325331f189a0abad6161302b"; // SHA-256 des Zugangsschlüssels für /eingang (der Schlüssel selbst steht nicht im Code)
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const kurz = (v, n) => String(v ?? "").slice(0, n);
 async function sha256(t) { const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, "0")).join(""); }
+const TM_BILD = "https://static.wixstatic.com/media/ef51c2_9c42c80b072d496b959c9bed1048a5c5~mv2.jpg/v1/fill/w_960,h_720,al_c,q_85/ef51c2_9c42c80b072d496b959c9bed1048a5c5~mv2.jpg";
 const ALTER = new Set(["8-10", "11-13", "14-16"]);
 
 async function checkin(request, env) {
@@ -44,6 +45,12 @@ export default {
     }
     if (url.pathname === "/api/checkin" && request.method === "POST") return checkin(request, env);
     if (url.pathname === "/eingang") return eingang(url, env);
+    if (url.pathname === "/bild/tomorrow-minds.jpg") {
+      // Bild von der Tomorrow-Minds-Website, über die eigene Adresse ausgeliefert (Besucher kontaktieren keinen fremden Server).
+      const r = await fetch(TM_BILD, { cf: { cacheTtl: 86400, cacheEverything: true } });
+      if (!r.ok) return new Response("Bild nicht verfügbar", { status: 502 });
+      return new Response(r.body, { headers: { "content-type": r.headers.get("content-type") || "image/jpeg", "cache-control": "public, max-age=86400" } });
+    }
     if (url.pathname === "/zahlen") {
       const { results } = await env.DB.prepare("SELECT tag, ereignis, anzahl FROM zahlen WHERE tag >= date('now', '-30 day') ORDER BY tag DESC").all();
       const tage = [...new Set(results.map(r => r.tag))];
