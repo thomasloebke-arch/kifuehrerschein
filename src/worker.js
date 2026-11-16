@@ -35,6 +35,7 @@ ${zeile("Interessen", r.interessen)}${zeile("KI-Erfahrung", r.ki_erfahrung)}${ze
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.hostname === "www.kifuehrerschein.jetzt") { url.hostname = "kifuehrerschein.jetzt"; return Response.redirect(url.toString(), 301); }
     if (url.pathname === "/api/e" && request.method === "POST") {
       const ev = (await request.text()).slice(0, 40);
       const ua = request.headers.get("user-agent") || "";
