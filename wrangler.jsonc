@@ -8,6 +8,7 @@
     { "pattern": "kifuehrerschein.jetzt", "custom_domain": true },
     { "pattern": "www.kifuehrerschein.jetzt", "custom_domain": true }
   ],
+  "send_email": [{ "name": "MELDUNG", "destination_address": "thomas@tomorrowminds.de" }],
   "assets": { "directory": "./public", "binding": "ASSETS" },
   "d1_databases": [{ "binding": "DB", "database_name": "kifuehrerschein-zahlen", "database_id": "8fa2c144-91d0-4427-bbc1-63aaa8fda344" }]
 }

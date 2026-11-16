@@ -1,3 +1,4 @@
+import { EmailMessage } from "cloudflare:email";
 // Anonyme Zählung: pro Tag und Ereignis nur eine Zahl. Keine IP, keine Kennung, keine Cookies.
 const EREIGNISSE = new Set(["besuch", "besuch_mall", "check_offen", "check_start", "check_fertig", "fahrstunde_offen", "fahrstunde_fertig", "klick_online", "klick_plus", "klick_mall", "klick_termine", "klick_club", "mission_start", "checkin_gesendet", "teaser_antwort", "klick_termin"]);
 const NAMEN = { besuch: "Seitenaufrufe", besuch_mall: "Seitenaufrufe Mall-Tablet", check_offen: "KI-Check geöffnet", check_start: "KI-Check: Blitzrunde begonnen", check_fertig: "KI-Check beendet", fahrstunde_offen: "Probe-Fahrstunde geöffnet", fahrstunde_fertig: "Probe-Fahrstunde ausgefüllt", klick_online: "Klick: Führerschein online", klick_plus: "Klick: Führerschein Plus", klick_mall: "Klick: Workshop (alt)", klick_termine: "Klick: Termine ansehen", klick_club: "Klick: Club", mission_start: "Mission begonnen", checkin_gesendet: "Auswertung angefordert", teaser_antwort: "Startseite: Frage beantwortet", klick_termin: "Klick: Platz buchen (Hub-Termin)" };
@@ -31,13 +32,27 @@ async function termine() {
   }
 }
 
-async function checkin(request, env) {
+// Kurze Meldung an Thomas bei jedem neuen KI-Check. Enthält bewusst keine Angaben des Kindes und keine Eltern-Adresse.
+const MELDUNG_VON = "kiki@kifuehrerschein.jetzt", MELDUNG_AN = "thomas@tomorrowminds.de";
+async function melden(env, alter, mall) {
+  if (!env.MELDUNG) return;
+  try {
+    const zeit = new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin", dateStyle: "short", timeStyle: "short" });
+    const b64 = s => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+    const text = `Ein neuer KI-Check ist eingegangen.\n\nAltersgruppe: ${alter}\nZeit: ${zeit} Uhr${mall ? "\nOrt: Mall-Tablet" : ""}\n\nDie Antworten stehen im Eingang (dein gespeicherter Link). Die Eltern erwarten die Auswertung innerhalb von 24 Stunden.\n`;
+    const roh = [`From: KI-Fuehrerschein <${MELDUNG_VON}>`, `To: ${MELDUNG_AN}`, `Subject: =?UTF-8?B?${b64("Neuer KI-Check (" + alter + ")")}?=`, `Message-ID: <${crypto.randomUUID()}@kifuehrerschein.jetzt>`, `Date: ${new Date().toUTCString().replace("GMT", "+0000")}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "Content-Transfer-Encoding: base64", "", b64(text).replace(/(.{76})/g, "$1\r\n")].join("\r\n");
+    await env.MELDUNG.send(new EmailMessage(MELDUNG_VON, MELDUNG_AN, roh));
+  } catch (e) { console.log("Meldung fehlgeschlagen: " + (e && e.message)); }
+}
+
+async function checkin(request, env, ctx) {
   let d; try { d = await request.json(); } catch (e) { return new Response("ungültig", { status: 400 }); }
   const mail = kurz(d.mail, 120).trim();
   if (d.ok !== true || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail) || !ALTER.has(d.alter)) return new Response("ungültig", { status: 400 });
   const liste = (v, n) => JSON.stringify((Array.isArray(v) ? v : []).slice(0, n).map(x => typeof x === "boolean" ? x : kurz(x, 60)));
   await env.DB.prepare("INSERT INTO checkins (id, erstellt, spitzname, altersgruppe, interessen, ki_erfahrung, blitz, app_art, idee, app_name, auftrag, antwort, angetippt, eigenanteil, bemerkt, eltern_email, mall) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17)")
     .bind(crypto.randomUUID(), new Date().toISOString(), kurz(d.name, 24), d.alter, liste(d.inter, 3), kurz(d.erf, 12), liste(d.blitz, 5), kurz(d.art, 40), kurz(d.idee, 400), kurz(d.app, 40), kurz(d.auftrag, 600), kurz(d.antwort, 600), liste(d.falsch, 3), kurz(d.eigen, 8), liste(d.bemerkt, 3), mail, d.mall ? 1 : 0).run();
+  ctx.waitUntil(melden(env, d.alter, !!d.mall));
   return new Response(null, { status: 204 });
 }
 
@@ -54,7 +69,7 @@ ${zeile("Interessen", r.interessen)}${zeile("KI-Erfahrung", r.ki_erfahrung)}${ze
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.hostname === "www.kifuehrerschein.jetzt") { url.hostname = "kifuehrerschein.jetzt"; return Response.redirect(url.toString(), 301); }
     if (url.pathname === "/api/e" && request.method === "POST") {
@@ -65,7 +80,7 @@ export default {
       }
       return new Response(null, { status: 204 });
     }
-    if (url.pathname === "/api/checkin" && request.method === "POST") return checkin(request, env);
+    if (url.pathname === "/api/checkin" && request.method === "POST") return checkin(request, env, ctx);
     if (url.pathname === "/eingang") return eingang(url, env);
     if (url.pathname === "/api/termine") return termine();
     if (url.pathname === "/bild/tomorrow-minds.jpg") {
