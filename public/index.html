@@ -148,7 +148,7 @@ input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-r
     <div class="prices">
       <div class="price"><h3>KI-Check</h3><div class="eur">0 €</div><ul><li>Blitzrunde und Mission mit Kiki</li><li>dein Ideen-Steckbrief</li><li>Auswertung für die Eltern per E-Mail</li></ul><a class="btn alt" href="#check">Jetzt starten</a></div>
       <div class="price hot"><h3>Führerschein online</h3><div class="eur">39 €</div><ul><li>Theorie und 5 Übungsstunden</li><li>Prüfung</li><li>Urkunde als PDF</li><li><strong>1 Monat Tomorrow Minds Club kostenlos</strong></li></ul><a class="btn" data-buy="online" href="#">Mit PayPal buchen</a></div>
-      <div class="price"><h3>Führerschein-Workshop im The Playce</h3><div class="eur">39 €</div><ul><li>90 Minuten vor Ort</li><li>im Tomorrow Minds Hub am Potsdamer Platz in Berlin</li><li>Karte sofort zum Mitnehmen</li><li>Barzahlung vor Ort</li></ul><a class="btn alt" data-t="klick_termine" href="#termine">Termine ansehen</a></div>
+      <div class="price"><h3>Führerschein-Workshop im The Playce</h3><div class="eur">39 €</div><ul><li>90 Minuten vor Ort</li><li>im Tomorrow Minds Lab am Potsdamer Platz in Berlin</li><li>Karte sofort zum Mitnehmen</li><li>Barzahlung vor Ort</li></ul><a class="btn alt" data-t="klick_termine" href="#termine">Termine ansehen</a></div>
     </div>
     <p class="small" style="margin-top:16px">Es buchen die Eltern. Nach der Buchung bekommt ihr per E-Mail den Starttermin. Alle Preise inklusive Mehrwertsteuer.</p>
   </div></section>
@@ -185,8 +185,9 @@ input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-r
 <div data-view="check" hidden><div class="wrap"><div class="card" id="checkBox"></div></div></div>
 
 <div data-view="termine" hidden><div class="wrap"><div class="card wide">
-  <h1>Termine im Tomorrow Minds Hub</h1>
-  <p>Der Tomorrow Minds Hub ist unser offener Treffpunkt im The Playce am Potsdamer Platz in Berlin. Während der Hub-Zeiten kannst du dort den <strong>KI-Check</strong> machen und am <strong>Führerschein-Workshop</strong> teilnehmen (90 Minuten, 39 €, Karte sofort zum Mitnehmen).</p>
+  <h1>Termine im Tomorrow Minds Lab</h1>
+  <p>Das Tomorrow Minds Lab ist unser offener Treffpunkt im The Playce am Potsdamer Platz in Berlin. Zu den Lab-Zeiten findet dort der <strong>Führerschein-Workshop</strong> statt (90 Minuten, 39 €, Karte sofort zum Mitnehmen). Den <strong>KI-Check</strong> kannst du dort auch machen.</p>
+  <p>Die Termine zeigen, wann wir da sind. Gebucht wird nur der Workshop.</p>
   <p class="small">Die Termine kommen direkt von tomorrowminds.de und aktualisieren sich automatisch. Gebucht wird dort.</p>
   <div id="termineBox"><p>Termine werden geladen …</p></div>
   <div class="row"><a class="btn" href="#check">Jetzt schon den KI-Check machen</a></div>
@@ -266,7 +267,7 @@ addEventListener("hashchange", show);
 
 /* ---------- Kaufen ---------- */
 function buyLink(kind) {
-  const names = { online: "Führerschein online (39 €)", plus: "Führerschein Plus (69 €)", mall: "Mall-Workshop (39 €)" };
+  const names = { online: "Führerschein online (39 €)", plus: "Führerschein Plus (69 €)", mall: "Führerschein-Workshop im The Playce (39 €)" };
   const pp = kind === "online" ? CFG.paypalOnline : kind === "plus" ? CFG.paypalPlus : "";
   if (pp) return pp;
   const body = "Hallo,\n\nich möchte buchen: " + names[kind] + "\n\nVorname des Kindes:\nAlter:\n\nViele Grüße";
@@ -454,16 +455,20 @@ function renderResult() {
   };
 }
 
-/* ---------- Termine im Hub (kommen automatisch von tomorrowminds.de) ---------- */
+/* ---------- Termine im Lab (kommen automatisch von tomorrowminds.de) ---------- */
 let termineGeladen = false;
+function workshopLink(t) {
+  const body = "Hallo,\n\nich möchte den Führerschein-Workshop im The Playce buchen (39 €, Barzahlung vor Ort).\n\nTermin: " + t.datum + " (" + t.titel + ")\nVorname des Kindes:\nAlter:\n\nViele Grüße";
+  return "mailto:" + CFG.mail + "?subject=" + encodeURIComponent("Führerschein-Workshop buchen: " + t.datum) + "&body=" + encodeURIComponent(body);
+}
 async function ladeTermine() {
   const el = $("#termineBox"); if (!el || termineGeladen) return;
   const fehler = `<p>Die Termine konnten gerade nicht geladen werden. Du findest sie auch direkt bei <a href="https://www.tomorrowminds.de/events" target="_blank" rel="noopener">Tomorrow Minds</a>.</p>`;
   try {
     const r = await fetch("/api/termine"); if (!r.ok) throw new Error();
     const d = await r.json();
-    if (!d.termine || !d.termine.length) { el.innerHTML = `<p>Im Moment sind keine Hub-Termine eingetragen. Schau bald wieder vorbei oder direkt bei <a href="https://www.tomorrowminds.de/events" target="_blank" rel="noopener">Tomorrow Minds</a>.</p>`; return; }
-    el.innerHTML = `<ul class="termine">${d.termine.map(t => `<li><div><p class="tdatum">${esc(t.datum)}</p><p class="ttitel">${esc(t.titel)}</p><p class="small">${esc(t.ort)}${t.preis ? " · Hub-Ticket " + esc(t.preis) : ""}</p></div><a class="btn alt" data-t="klick_termin" href="${esc(t.url)}" target="_blank" rel="noopener">Platz buchen</a></li>`).join("")}</ul>`;
+    if (!d.termine || !d.termine.length) { el.innerHTML = `<p>Im Moment sind keine Lab-Termine eingetragen. Schau bald wieder vorbei oder direkt bei <a href="https://www.tomorrowminds.de/events" target="_blank" rel="noopener">Tomorrow Minds</a>.</p>`; return; }
+    el.innerHTML = `<ul class="termine">${d.termine.map(t => `<li><div><p class="tdatum">${esc(t.datum)}</p><p class="ttitel">${esc(t.titel)}</p><p class="small">${esc(t.ort)}</p></div><a class="btn alt" data-t="klick_termin" href="${esc(workshopLink(t))}">Workshop buchen</a></li>`).join("")}</ul>`;
     $$("[data-t]", el).forEach(e => e.addEventListener("click", () => track(e.dataset.t)));
     termineGeladen = true;
   } catch (e) { el.innerHTML = fehler; }

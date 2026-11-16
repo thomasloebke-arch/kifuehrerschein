@@ -10,9 +10,9 @@ async function sha256(t) { const d = await crypto.subtle.digest("SHA-256", new T
 const TM_BILD = "https://static.wixstatic.com/media/ef51c2_9c42c80b072d496b959c9bed1048a5c5~mv2.jpg/v1/fill/w_960,h_720,al_c,q_85/ef51c2_9c42c80b072d496b959c9bed1048a5c5~mv2.jpg";
 const ALTER = new Set(["8-10", "11-13", "14-16"]);
 
-// Hub-Termine: werden von der Terminseite von Tomorrow Minds gelesen und 15 Minuten zwischengespeichert.
+// Lab-Termine: werden von der Terminseite von Tomorrow Minds gelesen und 15 Minuten zwischengespeichert.
 const TM_TERMINE = "https://www.tomorrowminds.de/events";
-const HUB = /\b(lab|hub)\b/i; // Welche Termine als Hub-Termine gelten
+const HUB = /\blab\b/i; // Welche Termine als Lab-Termine gelten
 const entities = s => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&nbsp;/g, " ");
 async function termine() {
   const kopf = { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=900" };
