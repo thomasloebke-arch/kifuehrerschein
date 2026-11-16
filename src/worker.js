@@ -35,14 +35,15 @@ async function termine() {
 // Kurze Meldung an Thomas bei jedem neuen KI-Check. Enthält bewusst keine Angaben des Kindes und keine Eltern-Adresse.
 const MELDUNG_VON = "kiki@kifuehrerschein.jetzt", MELDUNG_AN = "thomas@tomorrowminds.de";
 async function melden(env, alter, mall) {
-  if (!env.MELDUNG) return;
+  if (!env.MELDUNG) return "keine Bindung MELDUNG";
   try {
     const zeit = new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin", dateStyle: "short", timeStyle: "short" });
     const b64 = s => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
     const text = `Ein neuer KI-Check ist eingegangen.\n\nAltersgruppe: ${alter}\nZeit: ${zeit} Uhr${mall ? "\nOrt: Mall-Tablet" : ""}\n\nDie Antworten stehen im Eingang (dein gespeicherter Link). Die Eltern erwarten die Auswertung innerhalb von 24 Stunden.\n`;
     const roh = [`From: KI-Fuehrerschein <${MELDUNG_VON}>`, `To: ${MELDUNG_AN}`, `Subject: =?UTF-8?B?${b64("Neuer KI-Check (" + alter + ")")}?=`, `Message-ID: <${crypto.randomUUID()}@kifuehrerschein.jetzt>`, `Date: ${new Date().toUTCString().replace("GMT", "+0000")}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "Content-Transfer-Encoding: base64", "", b64(text).replace(/(.{76})/g, "$1\r\n")].join("\r\n");
     await env.MELDUNG.send(new EmailMessage(MELDUNG_VON, MELDUNG_AN, roh));
-  } catch (e) { console.log("Meldung fehlgeschlagen: " + (e && e.message)); }
+    return "gesendet";
+  } catch (e) { console.log("Meldung fehlgeschlagen: " + (e && e.message)); return "Fehler: " + (e && e.message); }
 }
 
 async function checkin(request, env, ctx) {
@@ -58,6 +59,7 @@ async function checkin(request, env, ctx) {
 
 async function eingang(url, env) {
   if (await sha256(url.searchParams.get("key") || "") !== SCHLUESSEL_HASH) return new Response("Nicht gefunden", { status: 404 });
+  if (url.searchParams.get("testmail")) return new Response("Testmail: " + await melden(env, "Test", false), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
   const { results } = await env.DB.prepare("SELECT * FROM checkins ORDER BY erstellt DESC LIMIT 200").all();
   const zeile = (k, v) => v ? `<p><b>${k}:</b> ${esc(v)}</p>` : "";
   const karten = results.map(r => `<article><h2>${esc(r.spitzname)} · ${esc(r.altersgruppe)} · „${esc(r.app_name)}“</h2><p class="s">${esc(r.erstellt.slice(0, 16).replace("T", " "))} UTC${r.mall ? " · Mall" : ""} · <a href="mailto:${esc(r.eltern_email)}?subject=${encodeURIComponent(r.spitzname + "s KI-Check: die Idee, zwei Stärken und ein nächster Schritt")}">${esc(r.eltern_email)}</a></p>
