@@ -35,7 +35,7 @@ async function checkin(request, env) {
   let d; try { d = await request.json(); } catch (e) { return new Response("ungültig", { status: 400 }); }
   const mail = kurz(d.mail, 120).trim();
   if (d.ok !== true || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail) || !ALTER.has(d.alter)) return new Response("ungültig", { status: 400 });
-  const liste = (v, n) => JSON.stringify((Array.isArray(v) ? v : []).slice(0, n).map(x => typeof x === "boolean" ? x : kurz(x, 30)));
+  const liste = (v, n) => JSON.stringify((Array.isArray(v) ? v : []).slice(0, n).map(x => typeof x === "boolean" ? x : kurz(x, 60)));
   await env.DB.prepare("INSERT INTO checkins (id, erstellt, spitzname, altersgruppe, interessen, ki_erfahrung, blitz, app_art, idee, app_name, auftrag, antwort, angetippt, eigenanteil, bemerkt, eltern_email, mall) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17)")
     .bind(crypto.randomUUID(), new Date().toISOString(), kurz(d.name, 24), d.alter, liste(d.inter, 3), kurz(d.erf, 12), liste(d.blitz, 5), kurz(d.art, 40), kurz(d.idee, 400), kurz(d.app, 40), kurz(d.auftrag, 600), kurz(d.antwort, 600), liste(d.falsch, 3), kurz(d.eigen, 8), liste(d.bemerkt, 3), mail, d.mall ? 1 : 0).run();
   return new Response(null, { status: 204 });

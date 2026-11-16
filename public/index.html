@@ -163,7 +163,7 @@ input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-r
     <div class="parents">
       <div><h3>Was Ihr Kind lernt</h3><p>KI als Werkzeug zu steuern: eigene Ideen klar formulieren, Ergebnisse prüfen, Daten schützen. Die Idee, die Entscheidung und die Verantwortung bleiben beim Kind.</p></div>
       <div><h3>Was der Führerschein ist</h3><p>Ein Lernnachweis von Tomorrow Minds. Er ist keine amtliche Erlaubnis und kein wissenschaftlich geprüfter Test. Er zeigt, was Ihr Kind in den Aufgaben selbst gekonnt hat.</p></div>
-      <div><h3>Datenschutz</h3><p>Für den KI-Check braucht Ihr Kind kein Konto, nur einen Spitznamen. Antworten speichern wir nur, wenn Sie am Ende Ihre E-Mail-Adresse für die Auswertung angeben, und löschen sie nach 90 Tagen. Es gibt keine Cookies.</p></div>
+      <div><h3>Datenschutz</h3><p>Für den KI-Check braucht Ihr Kind kein Konto, nur einen Namen oder Spitznamen. Antworten speichern wir nur, wenn Sie am Ende Ihre E-Mail-Adresse für die Auswertung angeben, und löschen sie nach 90 Tagen. Es gibt keine Cookies.</p></div>
     </div>
   </div></section>
 
@@ -217,7 +217,7 @@ input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-r
   <h2>KI-Check</h2>
   <p>Der KI-Check läuft im Browser und braucht kein Konto. Solange Sie keine Auswertung anfordern, werden Antworten und Texte weder gespeichert noch an uns übertragen.</p>
   <h2>Auswertung per E-Mail</h2>
-  <p>Wenn Sie als Erziehungsberechtigte am Ende des KI-Checks Ihre E-Mail-Adresse angeben und einwilligen, speichern wir: den Spitznamen, die Altersgruppe, die gewählten Interessen, die Antworten und Texte aus dem Check, Ihre E-Mail-Adresse und den Zeitpunkt. Wir nutzen diese Angaben, um die Auswertung zu erstellen und Ihnen per E-Mail zu schicken. Bei der Auswertung kann uns ein KI-Werkzeug unterstützen; jede Auswertung wird von einem Menschen geprüft. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Daten liegen in einer Datenbank bei Cloudflare und werden nach 90 Tagen gelöscht. Sie können Ihre Einwilligung jederzeit widerrufen und die Löschung verlangen, formlos per E-Mail an <a href="mailto:thomas@tomorrowminds.de">thomas@tomorrowminds.de</a>.</p>
+  <p>Wenn Sie als Erziehungsberechtigte am Ende des KI-Checks Ihre E-Mail-Adresse angeben und einwilligen, speichern wir: den angegebenen Namen oder Spitznamen, die Altersgruppe, die gewählten Interessen, die Antworten und Texte aus dem Check, Ihre E-Mail-Adresse und den Zeitpunkt. Wir nutzen diese Angaben, um die Auswertung zu erstellen und Ihnen per E-Mail zu schicken. Bei der Auswertung kann uns ein KI-Werkzeug unterstützen; jede Auswertung wird von einem Menschen geprüft. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Daten liegen in einer Datenbank bei Cloudflare und werden nach 90 Tagen gelöscht. Sie können Ihre Einwilligung jederzeit widerrufen und die Löschung verlangen, formlos per E-Mail an <a href="mailto:thomas@tomorrowminds.de">thomas@tomorrowminds.de</a>.</p>
   <h2>Buchung und Kontakt per E-Mail</h2>
   <p>Wenn Sie uns schreiben oder buchen, verarbeiten wir Ihre Angaben, um die Anfrage zu beantworten und den Vertrag zu erfüllen (Art. 6 Abs. 1 lit. b DSGVO). Bitte senden Sie nur die Angaben, die für die Buchung nötig sind.</p>
   <h2>Bezahlung mit PayPal</h2>
@@ -313,6 +313,10 @@ const INTER = {
   musik: { n: "Musik", liebt: "liebt Musik", vor: "Kopfhörer", fehler: "Eine Gitarre hat normalerweise vier Saiten.", richtig: "Eine Gitarre hat normalerweise sechs Saiten." },
   zeichnen: { n: "Zeichnen und Basteln", liebt: "zeichnet und bastelt gern", vor: "eine Packung Buntstifte", fehler: "Blau und Gelb gemischt ergibt Lila.", richtig: "Blau und Gelb gemischt ergibt Grün." },
   geschichten: { n: "Geschichten und Filme", liebt: "liebt Geschichten und Filme", vor: "einen Kinogutschein", fehler: "Die meisten Kinofilme dauern etwa zehn Minuten.", richtig: "Die meisten Kinofilme dauern anderthalb bis zwei Stunden." },
+  technik: { n: "Technik", liebt: "liebt Technik", vor: "einen Technik-Baukasten", fehler: "Ein Kilobyte ist größer als ein Gigabyte.", richtig: "Ein Gigabyte ist viel größer als ein Kilobyte." },
+  mathe: { n: "Mathe", liebt: "liebt Mathe", vor: "ein Rätselheft", fehler: "Ein Dreieck hat vier Ecken.", richtig: "Ein Dreieck hat drei Ecken." },
+  natur: { n: "Naturwissenschaften", liebt: "liebt Naturwissenschaften", vor: "ein Experimentierbuch", fehler: "Die Sonne dreht sich um die Erde.", richtig: "Die Erde dreht sich um die Sonne." },
+  sozial: { n: "Soziale Themen", liebt: "setzt sich gern für andere ein", vor: "eine Geburtstagskarte", fehler: "Ein Jahr hat zehn Monate.", richtig: "Ein Jahr hat zwölf Monate." },
   anderes: { n: "Etwas anderes", liebt: "", vor: "einen Gutschein", fehler: "Eine Woche hat acht Tage.", richtig: "Eine Woche hat sieben Tage." }
 };
 const ALTER = [["8-10", "8 bis 10"], ["11-13", "11 bis 13"], ["14-16", "14 bis 16"]];
@@ -320,7 +324,7 @@ const ERF = [["nie", "Noch nie"], ["manchmal", "Ein paarmal"], ["oft", "Oft"]];
 const ARTEN = ["Etwas Selbstgemachtes", "Ein Spiel oder Rätsel", "Ein Ausflug oder eine Aktion"];
 const START = "Kiki, hilf mir bitte ";
 const EIGEN = [["idee", "Die Idee ist von mir, Kiki hilft beim Planen"], ["kiki", "Das meiste ist von Kiki"], ["ich", "Alles ist von mir"]];
-const fresh = () => ({ started: false, step: "about", name: "", alter: "", inter: [], erf: "", i: 0, pick: null, shown: false, res: [], m: 0, art: "", idee: "", app: "", auftrag: "", antwort: "", falsch: [], eigen: "", bemerkt: [], mail: "", ok: false, sent: false, err: "" });
+const fresh = () => ({ started: false, step: "about", name: "", alter: "", inter: [], frei: "", erf: "", i: 0, pick: null, shown: false, res: [], m: 0, art: "", idee: "", app: "", auftrag: "", antwort: "", falsch: [], eigen: "", bemerkt: [], mail: "", ok: false, sent: false, err: "" });
 let ci = fresh();
 const teaser = { pick: null };
 function resetCheck() { ci = fresh(); teaser.pick = null; renderTeaser(); }
@@ -351,12 +355,12 @@ function renderAbout() {
   box().innerHTML = `${bar(5, "Teil 1 von 3 · Über dich")}
     <div class="kiki mini">${SVG.zwinkert}</div>
     <h2>Hi, ich bin Kiki. Und du?</h2>
-    <label class="lbl" for="nm">Dein Spitzname</label><input id="nm" type="text" maxlength="24" autocomplete="off" value="${esc(ci.name)}" placeholder="z. B. Flitzer">
+    <label class="lbl" for="nm">Dein Name / Spitzname</label><input id="nm" type="text" maxlength="24" autocomplete="off" value="${esc(ci.name)}" placeholder="z. B. Flitzer">
     <p class="lbl">Wie alt bist du?</p>${choice(ALTER, ci.alter, "alter")}
-    <p class="lbl">Was magst du? Such dir bis zu drei aus.</p>${choice(Object.entries(INTER).map(([k, v]) => [k, v.n]), ci.inter, "inter")}
+    <p class="lbl">Was magst du? Such dir bis zu drei aus.</p>${choice(Object.entries(INTER).map(([k, v]) => [k, v.n]), ci.inter, "inter")}${ci.inter.includes("anderes") ? `<label class="lbl" for="fr">Was denn?</label><input id="fr" type="text" maxlength="40" autocomplete="off" value="${esc(ci.frei)}">` : ""}
     <p class="lbl">Hast du schon mal eine KI benutzt?</p>${choice(ERF, ci.erf, "erf")}
-    <div class="row"><button class="btn" id="go" ${ready ? "" : "disabled"}>Los geht's</button></div>
-    <p class="small">Ein Spitzname reicht. Deinen echten Namen brauchen wir nicht.</p>`;
+    <div class="row"><button class="btn" id="go" ${ready ? "" : "disabled"}>Los geht's</button></div>`;
+  const fr = $("#fr"); if (fr) fr.oninput = () => { ci.frei = fr.value; };
   const nm = $("#nm"); nm.oninput = () => { ci.name = nm.value; $("#go").disabled = !(ci.name.trim() && ci.alter && ci.inter.length && ci.erf); };
   $$("[data-alter]").forEach(b => b.onclick = () => { ci.alter = b.dataset.alter; renderAbout(); });
   $$("[data-erf]").forEach(b => b.onclick = () => { ci.erf = b.dataset.erf; renderAbout(); });
@@ -387,7 +391,7 @@ function kikiSagt() {
 }
 function renderMission() {
   const t = thema(), j = jung();
-  const intro = `<p class="q">Dein bester Freund oder deine beste Freundin hat bald Geburtstag${t.liebt ? " und " + t.liebt : ""}. Du willst ihn oder sie überraschen. Kiki soll dir dabei helfen.</p>`;
+  const intro = `<p class="q">Dein bester Freund oder deine beste Freundin hat bald Geburtstag${t.liebt ? " und " + t.liebt : (ci.frei.trim() ? " und mag auch „" + esc(ci.frei.trim()) + "“" : "")}. Du willst ihn oder sie überraschen. Kiki soll dir dabei helfen.</p>`;
   const steps = [
     () => `<h2>Deine Mission</h2>${intro}` + (j
       ? `<p class="lbl">Was für eine Überraschung soll es werden?</p>${choice(ARTEN.map(a => [a, a]), ci.art, "art")}<label class="lbl" for="f">Das Besondere an deiner Überraschung ist …</label><textarea id="f" rows="2" maxlength="300">${esc(ci.idee)}</textarea>`
@@ -442,7 +446,7 @@ function renderResult() {
     if (ci.err) return renderResult();
     s.disabled = true; s.textContent = "Wird gesendet …";
     try {
-      const r = await fetch("/api/checkin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: ci.name, alter: ci.alter, inter: ci.inter, erf: ci.erf, blitz: ci.res, art: ci.art, idee: ci.idee, app: ci.app, auftrag: ci.auftrag, antwort: ci.antwort, falsch: ci.falsch, eigen: ci.eigen, bemerkt: ci.bemerkt, mail: ci.mail.trim(), ok: true, mall: MALL }) });
+      const r = await fetch("/api/checkin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: ci.name, alter: ci.alter, inter: ci.inter.map(k => k === "anderes" && ci.frei.trim() ? "anderes: " + ci.frei.trim() : k), erf: ci.erf, blitz: ci.res, art: ci.art, idee: ci.idee, app: ci.app, auftrag: ci.auftrag, antwort: ci.antwort, falsch: ci.falsch, eigen: ci.eigen, bemerkt: ci.bemerkt, mail: ci.mail.trim(), ok: true, mall: MALL }) });
       if (!r.ok) throw new Error();
       ci.sent = true; track("checkin_gesendet");
     } catch (e) { ci.err = "Das hat gerade nicht geklappt. Bitte versuch es gleich noch einmal."; }
