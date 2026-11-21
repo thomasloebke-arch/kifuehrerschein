@@ -269,7 +269,9 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 
 /* ---------- Anonyme Zählung (nur Zahl pro Tag und Ereignis) ---------- */
 const sent = new Set();
-function track(ev) { if (sent.has(ev)) return; sent.add(ev); try { if (location.protocol.startsWith("http")) navigator.sendBeacon("/api/e", ev); } catch (e) {} }
+// Quelle aus der Adresse (z. B. ?q=meta-geschenk für eine Anzeige). Bleibt nur im Speicher dieser Seite, nichts wird auf dem Gerät abgelegt.
+const QUELLE = ((new URLSearchParams(location.search).get("q") || "").toLowerCase().match(/^[a-z0-9-]{1,20}$/) || [""])[0];
+function track(ev) { if (sent.has(ev)) return; sent.add(ev); try { if (location.protocol.startsWith("http")) navigator.sendBeacon("/api/e", QUELLE ? ev + "@" + QUELLE : ev); } catch (e) {} }
 
 /* ---------- Router ---------- */
 const VIEWS = ["start", "check", "termine", "gutschein", "impressum", "datenschutz"];
