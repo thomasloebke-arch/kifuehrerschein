@@ -259,7 +259,8 @@ input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-r
 const CFG = {
   paypalOnline: "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info%40cuup.de&currency_code=EUR&item_name=KI-F%C3%BChrerschein%20online&amount=39.00&no_shipping=1",   // z. B. https://www.paypal.com/paypalme/DEINNAME/39EUR
   paypalPlus: "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info%40cuup.de&currency_code=EUR&item_name=KI-F%C3%BChrerschein%20Plus&amount=69.00&no_shipping=2",     // z. B. https://www.paypal.com/paypalme/DEINNAME/69EUR
-  mail: "thomas@tomorrowminds.de"
+  mail: "thomas@tomorrowminds.de",
+  tel: "0151 594 111 00"
 };
 const MALL = new URLSearchParams(location.search).get("mall") === "1";
 const $ = (s, r = document) => r.querySelector(s);
@@ -538,7 +539,7 @@ async function gutscheinZeigen() {
       ${d.von ? `<p>Von <strong>${esc(d.von)}</strong></p>` : ""}
       <p>Gilt für den KI-Führerschein online oder den Führerschein-Workshop im The Playce in Berlin. Wert 39 €.</p>
       <div class="vcode">${esc(d.code)}</div>
-      <p class="small">Einlösen: Code bei der Buchung angeben, per Mail an ${CFG.mail} oder vor Ort im Workshop. Gültig bis ${datum(d.gueltig_bis)}. · kifuehrerschein.jetzt</p>
+      <p class="small">Einlösen: Code bei der Buchung angeben, per Mail an ${CFG.mail}, telefonisch unter ${CFG.tel} oder vor Ort im Workshop. Gültig bis ${datum(d.gueltig_bis)}. · kifuehrerschein.jetzt</p>
     </div>${d.status === "eingeloest" ? `<div class="stamp">Eingelöst</div>` : ""}</div>
     <div class="row noprint" style="justify-content:center"><button class="btn" id="gdruck">Drucken oder als PDF speichern</button><button class="btn alt" id="gkopie">Link kopieren</button></div>
     <p class="small noprint" style="text-align:center;margin-top:14px">Speicher dir diesen Link. Damit kannst du den Gutschein jederzeit wieder aufrufen. Gib ihn nur an die beschenkte Person weiter.</p>
@@ -549,14 +550,14 @@ async function gutscheinZeigen() {
     GS.warte++;
     const lange = GS.warte > 24;
     box.innerHTML = `<div class="steck"><div class="kiki">${SVG.staunt}</div><div><h2>${lange ? "Das dauert gerade etwas länger" : "Danke! Wir warten noch auf PayPal …"}</h2>
-      <p>${lange ? `Sobald PayPal die Zahlung bestätigt, erscheint dein Gutschein hier. Spätestens innerhalb von 24 Stunden schalten wir ihn frei. Speicher dir diesen Link oder schreib uns an <a href="mailto:${CFG.mail}">${CFG.mail}</a>.` : "Sobald die Zahlung bestätigt ist, erscheint dein Gutschein hier. Das dauert meist nur ein paar Sekunden."}</p></div></div>
+      <p>${lange ? `Sobald PayPal die Zahlung bestätigt, erscheint dein Gutschein hier. Spätestens innerhalb von 24 Stunden schalten wir ihn frei. Speicher dir diesen Link oder melde dich bei uns: <a href="mailto:${CFG.mail}">${CFG.mail}</a> oder <a href="tel:+4915159411100">${CFG.tel}</a>.` : "Sobald die Zahlung bestätigt ist, erscheint dein Gutschein hier. Das dauert meist nur ein paar Sekunden."}</p></div></div>
       <p>Gutschein-Code: <strong>${esc(GCODE)}</strong></p>
       <div class="row"><a class="btn alt" href="${esc(d.paypal)}">Noch nicht bezahlt? Zu PayPal</a></div>`;
     if (!lange) GS.timer = setTimeout(() => { if (location.hash === "#gutschein") gutscheinZeigen(); }, 5000);
   } else if (d.status === "storniert") {
-    box.innerHTML = `<h1 style="font-size:2rem">Dieser Gutschein ist nicht mehr gültig</h1><p>Die Zahlung wurde zurückgebucht oder der Gutschein storniert. Fragen? <a href="mailto:${CFG.mail}">${CFG.mail}</a></p><p>${neu}</p>`;
+    box.innerHTML = `<h1 style="font-size:2rem">Dieser Gutschein ist nicht mehr gültig</h1><p>Die Zahlung wurde zurückgebucht oder der Gutschein storniert. Fragen? <a href="mailto:${CFG.mail}">${CFG.mail}</a> oder <a href="tel:+4915159411100">${CFG.tel}</a></p><p>${neu}</p>`;
   } else {
-    box.innerHTML = `<h1 style="font-size:2rem">Diesen Gutschein finden wir nicht</h1><p>Bitte prüf den Link. Fragen? <a href="mailto:${CFG.mail}">${CFG.mail}</a></p><p>${neu}</p>`;
+    box.innerHTML = `<h1 style="font-size:2rem">Diesen Gutschein finden wir nicht</h1><p>Bitte prüf den Link. Fragen? <a href="mailto:${CFG.mail}">${CFG.mail}</a> oder <a href="tel:+4915159411100">${CFG.tel}</a></p><p>${neu}</p>`;
   }
   const n = $("#gneu"); if (n) n.onclick = () => { GS.neu = true; };
 }
