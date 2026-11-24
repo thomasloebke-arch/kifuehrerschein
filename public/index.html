@@ -75,7 +75,7 @@ textarea{width:100%;font:inherit;padding:12px;border-radius:14px;border:3px soli
 #idle{position:fixed;left:0;right:0;bottom:0;background:#1C1A3F;color:#fff;padding:16px;text-align:center;font-weight:700;z-index:9}
 body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
 input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-radius:14px;border:3px solid #1C1A3F;background:#fff;color:#1C1A3F;min-height:52px}
-.lbl{display:block;font-weight:700;margin:18px 0 6px}.kiki.mini svg{height:90px;width:auto;display:block}
+.lbl{display:block;font-weight:700;margin:18px 0 6px}.eltern-liste{padding-left:1.2em;margin:12px 0 0}.eltern-liste li{margin:4px 0}.kiki.mini svg{height:90px;width:auto;display:block}
 .bubble{display:grid;grid-template-columns:90px 1fr;gap:14px;align-items:center;background:#EAF5FF;border-radius:20px;padding:16px;margin:8px 0 6px}.bubble p{margin:0;font-size:1.1rem}
 .steck{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;background:#FFD43B;border-radius:22px;padding:20px;margin-bottom:22px}.steck .kiki svg{width:100%;height:auto;display:block}.steck h2{margin:.1em 0 .25em}.steck p{margin:0 0 .3em}
 @media(max-width:520px){.steck,.bubble{grid-template-columns:1fr}.steck .kiki svg{max-width:110px}}
@@ -351,7 +351,8 @@ const ERF = [["nie", "Noch nie"], ["manchmal", "Ein paarmal"], ["oft", "Oft"]];
 const ARTEN = ["Etwas Selbstgemachtes", "Ein Spiel oder Rätsel", "Ein Ausflug oder eine Aktion"];
 const START = "Kiki, hilf mir bitte ";
 const EIGEN = [["idee", "Die Idee ist von mir, Kiki hilft beim Planen"], ["kiki", "Das meiste ist von Kiki"], ["ich", "Alles ist von mir"]];
-const fresh = () => ({ started: false, step: "about", name: "", alter: "", inter: [], frei: "", erf: "", i: 0, pick: null, shown: false, res: [], m: 0, art: "", idee: "", app: "", auftrag: "", antwort: "", falsch: [], eigen: "", bemerkt: [], mail: "", ok: false, sent: false, err: "" });
+const fresh = () => ({ started: false, step: (MALL || elternGesehen) ? "about" : "eltern", name: "", alter: "", inter: [], frei: "", erf: "", i: 0, pick: null, shown: false, res: [], m: 0, art: "", idee: "", app: "", auftrag: "", antwort: "", falsch: [], eigen: "", bemerkt: [], mail: "", ok: false, sent: false, err: "" });
+let elternGesehen = false;
 let ci = fresh();
 const teaser = { pick: null };
 function resetCheck() { ci = fresh(); teaser.pick = null; renderTeaser(); }
@@ -371,10 +372,36 @@ function choice(list, cur, attr) { return `<div class="chips">${list.map(([k, t]
 
 function render() {
   ci.started = true;
+  if (ci.step === "eltern" && teaser.pick !== null) ci.step = "about";
+  if (ci.step === "eltern") return renderEltern();
   if (ci.step === "about") return renderAbout();
   if (ci.step === "blitz") return renderBlitz();
   if (ci.step === "mission") return renderMission();
   return renderResult();
+}
+
+function renderEltern() {
+  const url = "https://kifuehrerschein.jetzt/?q=spaeter#check";
+  const mail = "mailto:?subject=" + encodeURIComponent("KI-Check für mein Kind") + "&body=" + encodeURIComponent("Kostenloser KI-Check (ca. 8 Minuten) zusammen mit meinem Kind machen:\n" + url);
+  box().innerHTML = `<p class="progress">Für Eltern</p>
+    <div class="kiki mini">${SVG.zwinkert}</div>
+    <h2>Der kostenlose KI-Check für Ihr Kind</h2>
+    <p>Ihr Kind verbringt rund 8 Minuten mit Kiki: eine Blitzrunde mit Fragen zu KI und eine kleine Mission, in der es eine eigene Idee mit KI entwickelt. Danach bekommen Sie per E-Mail eine persönliche Auswertung: was Ihr Kind schon gut kann, wo es aufpassen sollte und wie es weitergehen kann.</p>
+    <ul class="eltern-liste"><li>kostenlos, ohne Konto, keine Cookies</li><li>für Kinder von 8 bis 16 Jahren</li><li>am besten gemeinsam am Handy, Tablet oder Computer</li></ul>
+    <div class="row"><button class="btn" id="elternGo">Jetzt mit meinem Kind starten</button></div>
+    <p class="small" style="margin-top:22px">Ihr Kind ist gerade nicht da?</p>
+    <div class="row" style="margin-top:6px"><a class="btn alt" id="elternMail" href="${mail}">Link per E-Mail merken</a><button class="link" id="elternTeilen">Link kopieren</button></div>
+    <p class="small" id="elternHinweis" role="status"></p>`;
+  $("#elternGo").onclick = () => { elternGesehen = true; ci.step = "about"; track("eltern_start"); render(); window.scrollTo(0, 0); };
+  $("#elternMail").onclick = () => track("eltern_spaeter");
+  $("#elternTeilen").onclick = async () => {
+    track("eltern_spaeter");
+    try {
+      if (navigator.share) { await navigator.share({ title: "KI-Check für mein Kind", url }); return; }
+      await navigator.clipboard.writeText(url);
+      $("#elternHinweis").textContent = "Link kopiert. Sie können ihn sich z. B. per Messenger schicken.";
+    } catch (e) { $("#elternHinweis").textContent = "Der Link: " + url; }
+  };
 }
 
 function renderAbout() {
