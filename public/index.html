@@ -75,7 +75,7 @@ textarea{width:100%;font:inherit;padding:12px;border-radius:14px;border:3px soli
 #idle{position:fixed;left:0;right:0;bottom:0;background:#1C1A3F;color:#fff;padding:16px;text-align:center;font-weight:700;z-index:9}
 body.mall .nomall{display:none}body:not(.mall) .onlymall{display:none}
 input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-radius:14px;border:3px solid #1C1A3F;background:#fff;color:#1C1A3F;min-height:52px}
-.lbl{display:block;font-weight:700;margin:18px 0 6px}.eltern-liste{padding-left:1.2em;margin:12px 0 0}.eltern-liste li{margin:4px 0}.kiki.mini svg{height:90px;width:auto;display:block}
+.lbl{display:block;font-weight:700;margin:18px 0 6px}.kiki.mini svg{height:90px;width:auto;display:block}
 .bubble{display:grid;grid-template-columns:90px 1fr;gap:14px;align-items:center;background:#EAF5FF;border-radius:20px;padding:16px;margin:8px 0 6px}.bubble p{margin:0;font-size:1.1rem}
 .steck{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;background:#FFD43B;border-radius:22px;padding:20px;margin-bottom:22px}.steck .kiki svg{width:100%;height:auto;display:block}.steck h2{margin:.1em 0 .25em}.steck p{margin:0 0 .3em}
 @media(max-width:520px){.steck,.bubble{grid-template-columns:1fr}.steck .kiki svg{max-width:110px}}
@@ -182,6 +182,7 @@ input[type=text],input[type=email]{width:100%;font:inherit;padding:12px;border-r
       <div><h3>Was der Führerschein ist</h3><p>Ein Lernnachweis von Tomorrow Minds. Er ist keine amtliche Erlaubnis und kein wissenschaftlich geprüfter Test. Er zeigt, was Ihr Kind in den Aufgaben selbst gekonnt hat.</p></div>
       <div><h3>Datenschutz</h3><p>Für den KI-Check braucht Ihr Kind kein Konto, nur einen Namen oder Spitznamen. Antworten speichern wir nur, wenn Sie am Ende Ihre E-Mail-Adresse für die Auswertung angeben, und löschen sie nach 90 Tagen. Es gibt keine Cookies.</p></div>
     </div>
+    <div class="row"><a class="btn" href="#check">KI-Check mit meinem Kind starten</a></div>
   </div></section>
 
   <section class="band ink"><div class="wrap">
@@ -386,11 +387,10 @@ function renderEltern() {
   box().innerHTML = `<p class="progress">Für Eltern</p>
     <div class="kiki mini">${SVG.zwinkert}</div>
     <h2>Der kostenlose KI-Check für Ihr Kind</h2>
-    <p>Ihr Kind verbringt rund 8 Minuten mit Kiki: eine Blitzrunde mit Fragen zu KI und eine kleine Mission, in der es eine eigene Idee mit KI entwickelt. Danach bekommen Sie per E-Mail eine persönliche Auswertung: was Ihr Kind schon gut kann, wo es aufpassen sollte und wie es weitergehen kann.</p>
-    <ul class="eltern-liste"><li>kostenlos, ohne Konto, keine Cookies</li><li>für Kinder von 8 bis 16 Jahren</li><li>am besten gemeinsam am Handy, Tablet oder Computer</li></ul>
+    <p>8 Minuten mit Kiki: Ihr Kind beantwortet Fragen zu KI und entwickelt eine eigene Idee. Sie bekommen danach eine persönliche Auswertung per E-Mail.</p>
+    <p class="small">Kostenlos · ohne Konto · für 8 bis 16 Jahre</p>
     <div class="row"><button class="btn" id="elternGo">Jetzt mit meinem Kind starten</button></div>
-    <p class="small" style="margin-top:22px">Ihr Kind ist gerade nicht da?</p>
-    <div class="row" style="margin-top:6px"><a class="btn alt" id="elternMail" href="${mail}">Link per E-Mail merken</a><button class="link" id="elternTeilen">Link kopieren</button></div>
+    <p class="small" style="margin-top:18px">Ihr Kind ist gerade nicht da? <a class="link" id="elternMail" href="${mail}">Link per E-Mail merken</a> · <button class="link" id="elternTeilen">Link kopieren</button></p>
     <p class="small" id="elternHinweis" role="status"></p>`;
   $("#elternGo").onclick = () => { elternGesehen = true; ci.step = "about"; track("eltern_start"); render(); window.scrollTo(0, 0); };
   $("#elternMail").onclick = () => track("eltern_spaeter");
