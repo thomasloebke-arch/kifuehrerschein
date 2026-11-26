@@ -600,7 +600,17 @@ function mall() {
     t1 = setTimeout(() => { if (location.hash && location.hash !== "#start") { bar.hidden = false; t2 = setTimeout(() => { resetCheck(); location.hash = "#start"; bar.hidden = true; }, 20000); } }, 90000); };
   ["pointerdown", "keydown", "input"].forEach(e => addEventListener(e, arm, true)); arm();
 }
-document.addEventListener("DOMContentLoaded", () => { if (GCODE && !location.hash) history.replaceState(null, "", location.pathname + location.search + "#gutschein"); track(MALL ? "besuch_mall" : "besuch"); wireBuy(); mall(); renderTeaser(); show(); $$("[data-t]").forEach(e => e.addEventListener("click", () => track(e.dataset.t))); });
+// Zählt einmal pro Seitenaufruf, wenn die Seite insgesamt 20 Sekunden sichtbar war (nur im Speicher, keine Cookies).
+function startVerweil() {
+  let sichtbar = 0, seit = document.visibilityState === "visible" ? Date.now() : null, t = null;
+  const plane = () => { clearTimeout(t); if (seit !== null) t = setTimeout(() => track("verweilt_20s"), Math.max(0, 20000 - sichtbar)); };
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") { seit = Date.now(); } else if (seit !== null) { sichtbar += Date.now() - seit; seit = null; }
+    plane();
+  });
+  plane();
+}
+document.addEventListener("DOMContentLoaded", () => { if (GCODE && !location.hash) history.replaceState(null, "", location.pathname + location.search + "#gutschein"); track(MALL ? "besuch_mall" : "besuch"); if (!MALL) startVerweil(); wireBuy(); mall(); renderTeaser(); show(); $$("[data-t]").forEach(e => e.addEventListener("click", () => track(e.dataset.t))); });
 </script>
 </body>
 </html>
